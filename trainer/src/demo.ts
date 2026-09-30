@@ -1,4 +1,4 @@
-import type { Answer, TrainingSet } from "./domain";
+import type { Answer, Progress, TrainingSet } from "./domain";
 import { countProgress, filterTasks, findTask } from "./domain";
 import published from "../../course/data/training-set.json";
 
@@ -62,6 +62,8 @@ const answers: Answer[] = [
   { taskId: "react-1", kind: "short-text", text: "Моё объяснение" },
 ];
 
+const noAnswers: Answer[] = [];
+
 const oneAnswer: Answer[] = [
   { taskId: "ts-1", kind: "single-choice", optionId: "b" },
 ];
@@ -83,6 +85,10 @@ function show(label: string, value: unknown): void {
   console.log(label, JSON.stringify(value, null, 2));
 }
 
+function showProgress(label: string, progress: Progress): void {
+  console.log(`${label}: filled=${progress.filled}, total=${progress.total}`);
+}
+
 const setBefore = JSON.stringify(webBasics);
 const answersBefore = JSON.stringify(answers);
 
@@ -94,10 +100,10 @@ show("Поиск отсутствующего id", findTask(webBasics, "missing"
 show("Фильтр typescript", filterTasks(webBasics, "typescript"));
 show("Фильтр без совпадений", filterTasks(webBasics, "http"));
 show("Фильтр пустого набора", filterTasks(emptySet, "css"));
-show("Прогресс пустого набора", countProgress(emptySet, []));
-show("Прогресс без ответов", countProgress(webBasics, []));
-show("Прогресс одного ответа", countProgress(webBasics, oneAnswer));
-show("Прогресс полного набора", countProgress(webBasics, answers));
+showProgress("Прогресс пустого набора", countProgress(emptySet, noAnswers));
+showProgress("Прогресс без ответов", countProgress(webBasics, noAnswers));
+showProgress("Прогресс одного ответа", countProgress(webBasics, oneAnswer));
+showProgress("Прогресс полного набора", countProgress(webBasics, answers));
 
 const whitespace = "   ";
 show("Пробельный текст", {
@@ -107,14 +113,13 @@ show("Пробельный текст", {
   trimmedLength: whitespace.trim().length,
   filled: whitespace.trim() !== "",
 });
-show("Прогресс при пробельном тексте", countProgress(webBasics, whitespaceAnswer));
-show("Прогресс при чужом taskId", countProgress(webBasics, foreignAnswer));
+showProgress("Прогресс при пробельном тексте", countProgress(webBasics, whitespaceAnswer));
+showProgress("Прогресс при чужом taskId", countProgress(webBasics, foreignAnswer));
 show("Второй набор, фильтр css", filterTasks(cssBasics, "css"));
 show("Второй набор, поиск css-2", findTask(cssBasics, "css-2"));
 
 findTask(webBasics, "ts-1");
 filterTasks(webBasics, "typescript");
-countProgress(webBasics, answers);
 
 show("Набор не изменился", JSON.stringify(webBasics) === setBefore);
 show("Ответы не изменились", JSON.stringify(answers) === answersBefore);
