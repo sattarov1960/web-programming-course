@@ -8,8 +8,8 @@
 | --- | --- | --- |
 | [L0. Нулевое занятие](lessons/l0/README.md) | Стартовая практика HTML/CSS/JavaScript | P1 |
 | [L1. TypeScript и данные](lessons/l1/README.md) | Модель и функции обработки данных | P2 |
-| [L2. Компоненты React](lessons/l2/README.md) | Каталог и отображение заданий | P3 |
-| [L3. Формы и состояние](lessons/l3/README.md) | Ответы и прохождение попытки | P4 |
+| [L2. Типизированный интерфейс React](lessons/l2/README.md) | Список и карточка заданий одного модуля | P3 |
+| [L3. Формы и состояние](lessons/l3/README.md) | Ответы и прохождение модуля | P4 |
 | [L4. Черновик и восстановление](lessons/l4/README.md) | Сохранение между перезагрузками | P5 |
 | [L5. HTTP и сервер](lessons/l5/README.md) | Подключение к учебному API | P6 |
 | [L6. Проверка приложения](lessons/l6/README.md) | Тесты поведения | P7 |
@@ -32,7 +32,7 @@ fork → clone → ветка задания → commit → push → pull reques
 ## Общие материалы
 
 - [Формат данных и API](course/CONTRACT.md)
-- [Учебный набор](course/data/training-set.json)
+- [Текущий учебный модуль](course/data/training-set.json)
 - [Локальный сервер](course/server/README.md)
 - [Окружение тренажёра](trainer/README.md)
 

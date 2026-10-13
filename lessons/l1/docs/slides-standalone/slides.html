@@ -12,26 +12,35 @@
 </head>
 <body>
   <main class="deck">
-    <section class="slide is-active"><p class="accent">L1</p><h1>TypeScript и данные</h1><p>Сначала создаём рабочий проект, затем описываем модель и правила обработки коллекций.</p></section>
-    <section class="slide"><h2>Зачем начинать с данных</h2><p>Идентификатор связывает сущности между экранами, тип различает допустимые формы, чистая функция даёт проверяемый результат. React и сервер появятся позже.</p></section>
-    <section class="slide"><h2>Термины проекта</h2><div class="grid"><div class="card"><h3>TypeScript</h3><p>Проверка формы значений до запуска.</p></div><div class="card"><h3>package.json</h3><p>Манифест зависимостей и команд.</p></div><div class="card"><h3>lockfile</h3><p>Точные версии дерева пакетов.</p></div><div class="card"><h3>tsconfig</h3><p>Правила компилятора.</p></div></div></section>
-    <section class="slide"><h2>Создайте проект в trainer</h2><p>Папка уже есть в репозитории, но <code>package.json</code>, lockfile, <code>tsconfig.json</code> и исходники проекта создаёт студент. Точная последовательность — в гайде.</p><p class="accent">TypeScript устанавливается по проверенной точной версии, без <code>latest</code>.</p></section>
-    <section class="slide"><h2>Проверка запуска</h2><div class="code">npm run check
-npm run demo</div><ul><li><code>check</code> проверяет типы.</li><li><code>demo</code> запускает маленький <code>.ts</code>-файл.</li><li><code>npm ci</code> используется после создания lockfile.</li></ul><p>Команды одинаковы в Linux и Windows PowerShell.</p></section>
-    <section class="slide"><h2>Модель — это договорённость</h2><p>Спросите: какие поля общие? Что различает формы? Какие поля появляются только в одном варианте? Как две коллекции связаны id?</p><div class="code">PaperBook | AudioBook
+    <section class="slide is-active"><p class="accent">L1</p><h1>TypeScript и данные</h1><p>Сначала разбираем инструмент и модель, по итогам лекции вы создаёте рабочий проект и описываете правила обработки коллекций.</p></section>
+    <section class="slide"><h2>TypeScript — инструмент проверки</h2><p>Редактор остаётся местом, где мы пишем текст. TypeScript проверяет исходник до запуска.</p><div class="code">.ts → tsc / check → tsx / demo</div><ul><li>JavaScript можно сразу передать среде выполнения.</li><li>TypeScript сначала проверяет контракт типов.</li></ul></section>
+    <section class="slide"><h2>Данные будущего приложения</h2><p>Опубликованный контракт описывает модуль, задания и ответы для будущих экранов приложения. Идентификатор связывает записи, тип различает допустимые формы, чистая функция даёт проверяемый результат. React и сервер появятся позже.</p></section>
+    <section class="slide"><h2>Две границы</h2><div class="grid"><div class="card"><h3>Compile-time</h3><p>TypeScript проверяет исходный код до запуска.</p><div class="code">npm run check</div></div><div class="card"><h3>Runtime</h3><p>JavaScript выполняет выражения в браузере или Node.js.</p><div class="code">npm exec -- tsx file.ts</div></div></div><p class="accent">TypeScript не меняет правила выполнения JavaScript.</p></section>
+    <section class="slide"><h2>Типы не проверяют JSON</h2><div class="code">JSON.parse → unknown → проверка формы</div><ul><li>синтаксически корректный JSON может иметь неправильные значения;</li><li><code>as</code> не проверяет входные данные;</li><li>внешний слой отвечает за проверку формы.</li></ul></section>
+    <section class="slide"><h2>A1 после лекции: создайте проект в trainer</h2><p>На лекции разбираем маршрут. По итогам лекции вы создаёте <code>package.json</code>, lockfile, <code>tsconfig.json</code> и исходники внутри существующей папки <code>trainer</code>.</p><div class="grid"><div class="card"><h3>package.json</h3><p>Зависимости и команды проекта.</p></div><div class="card"><h3>lockfile</h3><p>Точные версии дерева пакетов.</p></div><div class="card"><h3>tsconfig</h3><p>Правила компилятора.</p></div><div class="card"><h3>src</h3><p>Типы, функции и демонстрационный файл.</p></div></div><p class="accent">Версии устанавливаются точно, без <code>latest</code>.</p></section>
+    <section class="slide"><h2>Проверка TypeScript и запуск</h2><div class="code">npm run check
+npm run demo</div><ul><li><code>check</code> запускает <code>tsc --noEmit</code> и не выполняет программу;</li><li><code>demo</code> запускает <code>tsx src/demo.ts</code>;</li><li><code>npm ci</code> используется после создания lockfile.</li></ul><p>Команды одинаковы в Linux и Windows PowerShell.</p></section>
+    <section class="slide"><h2>Модель — это договорённость</h2><p>У разных форм есть общие поля и поля, доступные только одной форме.</p><div class="code">PaperBook | AudioBook
        ↓ kind
-доступное поле формы</div></section>
-    <section class="slide"><h2>Discriminated union</h2><div class="code">type PaperBook = {
-  id: string; kind: "paper"; pages: number;
-};
-type AudioBook = {
-  id: string; kind: "audio"; duration: number;
-};</div><p>Проверка <code>kind</code> помогает безопасно выбрать соответствующее поле.</p></section>
-    <section class="slide"><h2>Коллекции</h2><div class="grid"><div class="card"><h3>find</h3><p>Один элемент или <code>undefined</code>; отсутствие нужно обработать.</p></div><div class="card"><h3>filter</h3><p>Новый массив, возможно пустой; исходные данные не меняются.</p></div></div><p class="accent">Пустой результат — обычный результат, а не исключение.</p></section>
-    <section class="slide"><h2>Производное значение</h2><p>Прогресс вычисляется из набора и ответов. Число заполненных элементов не должно жить вторым независимым состоянием.</p><ul><li>выбор считается заполненным;</li><li>текст из внешних пробелов — нет;</li><li>чужой идентификатор — не относится к текущему заданию.</li></ul></section>
-    <section class="slide"><h2>Чистая функция</h2><ul><li>получает всё нужное через параметры;</li><li>возвращает значение;</li><li>не мутирует массивы и объекты;</li><li>не зависит от React, HTTP, часов и случайности.</li></ul><p>В <code>demo.ts</code> покажите результаты вызовов для обычных и пустых входов.</p></section>
-    <section class="slide"><h2>A1: самостоятельная работа</h2><ul><li>Описать две формы заданий и две формы ответов по контракту.</li><li>Реализовать поиск по id, фильтр по теме и прогресс.</li><li>Проверить обычные и пустые наборы, отсутствующий id, чужой id и пробелы.</li><li>Создать типизированные данные из опубликованного примера и второй набор.</li><li>Запустить <code>check</code> и демонстрационный файл.</li></ul></section>
-    <section class="slide"><h2>Граница L1</h2><p>Не добавляйте React, Vite, формы, HTTP или хранилище. Строка <code>code</code> — данные для показа. Следующая лекция подключит UI к вашей модели.</p><p class="accent">P2 проверяет A1.</p></section>
+доступное поле формы</div><p>Дискриминант <code>kind</code> помогает описать допустимые данные.</p></section>
+    <section class="slide"><h2>Сужение по kind</h2><div class="code">if (item.kind === "paper") {
+  item.pages;
+} else {
+  item.duration;
+}</div><p>После проверки <code>kind</code> TypeScript открывает поле соответствующей формы.</p><p class="accent">Сначала проверяем форму, затем используем её свойство.</p></section>
+    <section class="slide"><h2>Два вида ответа</h2><div class="grid"><div class="card"><h3>single-choice</h3><div class="code">{ "taskId": "ts-1",
+  "kind": "single-choice",
+  "optionId": "b" }</div></div><div class="card"><h3>short-text</h3><div class="code">{ "taskId": "react-1",
+  "kind": "short-text",
+  "text": "Моё объяснение" }</div></div></div><p class="accent">Обе формы связаны с заданием через <code>taskId</code>.</p></section>
+    <section class="slide"><h2>Коллекции и идентификаторы</h2><div class="grid"><div class="card"><h3>find</h3><p>Один элемент или <code>undefined</code>; отсутствие нужно обработать.</p></div><div class="card"><h3>filter</h3><p>Новый массив, возможно пустой; исходные данные не меняются.</p></div></div><div class="code">answersById.find(answer =&gt;
+  answer.taskId === task.id)</div><p class="accent">Порядок отображения можно менять; идентификатор остаётся.</p></section>
+    <section class="slide"><h2>Производное значение</h2><p>Прогресс вычисляется из модуля и ответов. Число заполненных элементов не должно жить вторым независимым состоянием.</p><ul><li>выбор считается заполненным;</li><li>текст из внешних пробелов — нет;</li><li>чужой идентификатор — не относится к текущему заданию.</li></ul></section>
+    <section class="slide"><h2>Чистая функция и модуль</h2><div class="grid"><div class="card"><h3>Чистая функция</h3><p>Получает входы, возвращает результат и не меняет данные.</p></div><div class="card"><h3>Модуль</h3><p><code>export</code> открывает объявление, <code>import</code> использует его в другом файле.</p></div></div><div class="code">export function titleWithPrefix(note, prefix) {
+  return `${prefix}: ${note.title}`;
+}</div></section>
+    <section class="slide"><h2>A1: самостоятельная работа</h2><ul><li>Описать две формы заданий и две формы ответов по контракту.</li><li>Реализовать поиск по id, фильтр по теме и прогресс.</li><li>Проверить обычный и пустой модуль, отсутствующий id, чужой id и пробелы.</li><li>Создать типизированные данные из опубликованного примера и второго модуля.</li><li>Запустить <code>check</code> и демонстрационный файл.</li></ul></section>
+    <section class="slide"><h2>Граница L1</h2><p>Не добавляйте React, Vite, формы, HTTP или хранилище. Строка <code>code</code> — данные для показа. Следующая лекция подключит UI к вашей модели.</p><p class="accent">P1 проверяет A0; <code>trainer</code> на P1 не требуется. P2 проверяет A1.</p></section>
   </main>
   <nav class="controls" aria-label="Навигация"><button id="prev">Назад</button><button id="next">Далее</button><span class="counter" id="counter"></span><span class="bar"><span id="bar"></span></span><button id="print">Печать</button></nav>
   <script>
