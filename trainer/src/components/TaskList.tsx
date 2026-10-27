@@ -4,9 +4,10 @@ type TaskListProps = {
   tasks: Task[];
   selectedTaskId: string;
   onChoose: (id: string) => void;
+  filledIds: Set<string>;
 };
 
-export default function TaskList({ tasks, selectedTaskId, onChoose }: TaskListProps) {
+export default function TaskList({ tasks, selectedTaskId, onChoose, filledIds }: TaskListProps) {
   return (
     <nav className="task-list" aria-label="Задания модуля">
       <h2>Задания <span>{tasks.length}</span></h2>
@@ -22,14 +23,14 @@ export default function TaskList({ tasks, selectedTaskId, onChoose }: TaskListPr
               <span className="task-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
               <span className="task-summary">
                 <span className="task-topic">{task.topic}</span>
-                <span>{task.prompt}</span>
+                <span>{task.prompt}</span><span className="task-status">{filledIds.has(task.id) ? "Заполнено" : "Не заполнено"}</span>
               </span>
               <span className="task-arrow" aria-hidden="true">↗</span>
             </button>
           </li>
         ))}
       </ul>
-      <p className="list-hint">Выберите задание, чтобы прочитать его условие.</p>
+      <p className="list-hint">Выберите задание для перехода к ответу.</p>
     </nav>
   );
 }
