@@ -50,9 +50,9 @@ export function filterTasks(set: TrainingSet, topic: string): Task[] {
   return set.tasks.filter((task) => task.topic === topic);
 }
 
-export function isFilled(task: Task, answers: Answer[]): boolean {
+function isFilled(task: Task, answers: Answer[]): boolean {
   const answer = answers.find((item) => item.taskId === task.id);
-  if (answer === undefined || answer.kind !== task.kind) {
+  if (answer === undefined) {
     return false;
   }
 
@@ -60,7 +60,7 @@ export function isFilled(task: Task, answers: Answer[]): boolean {
     return answer.text.trim() !== "";
   }
 
-  return answer.optionId.length > 0;
+  return true;
 }
 
 export function countProgress(set: TrainingSet, answers: Answer[]): Progress {
