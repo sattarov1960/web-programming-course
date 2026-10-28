@@ -54,7 +54,19 @@ export default function App({ trainingSet = defaultSet }: AppProps) {
 
       {tasks.length === 0 ? (
         <section className="empty-state"><h2>В этом модуле пока нет заданий</h2><p>Задания появятся здесь, когда модуль будет подготовлен.</p></section>
-      ) : submitted ? (
+      ) : (
+        <>
+          <div className="workspace">
+            <TaskList tasks={tasks} selectedTaskId={selectedTaskId} onChoose={setSelectedTaskId} filledIds={new Set(tasks.filter((task) => isFilled(task, answers[task.id])).map((task) => task.id))} />
+            {selectedTask ? <div><TaskCard task={selectedTask} answer={answers[selectedTask.id]} onAnswer={saveAnswer} disabled={submitted} />
+              <div className="actions navigation">
+                <button type="button" disabled={selectedIndex <= 0} onClick={() => setSelectedTaskId(tasks[selectedIndex - 1].id)}>Назад</button>
+                <button type="button" disabled={selectedIndex >= tasks.length - 1} onClick={() => setSelectedTaskId(tasks[selectedIndex + 1].id)}>Вперёд</button>
+              </div>
+            </div> : <section className="empty-state"><h2>Выберите задание</h2><p>Текущее задание отсутствует в модуле.</p></section>}
+          </div>
+          {!submitted && <div className="finish-area"><button className="primary-button" type="button" onClick={finish}>Завершить попытку</button></div>}
+          {submitted && (
         <section className="review" aria-labelledby="review-title">
           <h2 id="review-title">Обзор ответов</h2>
           {tasks.map((task, index) => {
@@ -68,18 +80,7 @@ export default function App({ trainingSet = defaultSet }: AppProps) {
           })}
           <button className="primary-button" type="button" onClick={startAgain}>Начать новую попытку</button>
         </section>
-      ) : (
-        <>
-          <div className="workspace">
-            <TaskList tasks={tasks} selectedTaskId={selectedTaskId} onChoose={setSelectedTaskId} filledIds={new Set(tasks.filter((task) => isFilled(task, answers[task.id])).map((task) => task.id))} />
-            {selectedTask ? <div><TaskCard task={selectedTask} answer={answers[selectedTask.id]} onAnswer={saveAnswer} />
-              <div className="actions navigation">
-                <button type="button" disabled={selectedIndex <= 0} onClick={() => setSelectedTaskId(tasks[selectedIndex - 1].id)}>Назад</button>
-                <button type="button" disabled={selectedIndex >= tasks.length - 1} onClick={() => setSelectedTaskId(tasks[selectedIndex + 1].id)}>Вперёд</button>
-              </div>
-            </div> : <section className="empty-state"><h2>Выберите задание</h2><p>Текущее задание отсутствует в модуле.</p></section>}
-          </div>
-          <div className="finish-area"><button className="primary-button" type="button" onClick={finish}>Завершить попытку</button></div>
+          )}
           {showWarning && <section className="warning" role="alert" aria-labelledby="warning-title"><h2 id="warning-title">Есть незаполненные задания</h2><p>Пропущены: {missing.map((task) => tasks.indexOf(task) + 1).join(", ")}. Завершить попытку?</p><div className="actions"><button type="button" onClick={() => setShowWarning(false)}>Продолжить отвечать</button><button className="primary-button" type="button" onClick={() => { setShowWarning(false); setSubmitted(true); }}>Завершить с пропусками</button></div></section>}
         </>
       )}
