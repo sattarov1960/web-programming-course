@@ -1,17 +1,13 @@
 import { useState } from "react";
 import trainingData from "../../course/data/training-set.json";
-import type { Answer, Task, TrainingSet } from "./domain";
+import { countProgress, findTask, isFilled } from "./domain";
+import type { Answer, TrainingSet } from "./domain";
 import TaskList from "./components/TaskList";
 import TaskCard from "./components/TaskCard";
 
 const defaultSet = trainingData as TrainingSet;
 
 type AppProps = { trainingSet?: TrainingSet };
-
-function isFilled(task: Task, answer: Answer | undefined): boolean {
-  if (!answer || answer.taskId !== task.id || answer.kind !== task.kind) return false;
-  return answer.kind === "short-text" ? answer.text.trim().length > 0 : answer.optionId.length > 0;
-}
 
 export default function App({ trainingSet = defaultSet }: AppProps) {
   const [selectedTaskId, setSelectedTaskId] = useState(() => trainingSet.tasks[0]?.id ?? "");
@@ -20,9 +16,10 @@ export default function App({ trainingSet = defaultSet }: AppProps) {
   const [showWarning, setShowWarning] = useState(false);
   const tasks = trainingSet.tasks;
   const selectedIndex = tasks.findIndex((task) => task.id === selectedTaskId);
-  const selectedTask = tasks[selectedIndex];
-  const missing = tasks.filter((task) => !isFilled(task, answers[task.id]));
-  const filled = tasks.length - missing.length;
+  const selectedTask = findTask(trainingSet, selectedTaskId);
+  const answerList = Object.values(answers);
+  const missing = tasks.filter((task) => !isFilled(task, answerList));
+  const { filled } = countProgress(trainingSet, answerList);
 
   function saveAnswer(answer: Answer) {
     if (!submitted) setAnswers((current) => ({ ...current, [answer.taskId]: answer }));
@@ -57,7 +54,7 @@ export default function App({ trainingSet = defaultSet }: AppProps) {
       ) : (
         <>
           <div className="workspace">
-            <TaskList tasks={tasks} selectedTaskId={selectedTaskId} onChoose={setSelectedTaskId} filledIds={new Set(tasks.filter((task) => isFilled(task, answers[task.id])).map((task) => task.id))} />
+            <TaskList tasks={tasks} selectedTaskId={selectedTaskId} onChoose={setSelectedTaskId} filledIds={new Set(tasks.filter((task) => isFilled(task, answerList)).map((task) => task.id))} />
             {selectedTask ? <div><TaskCard task={selectedTask} answer={answers[selectedTask.id]} onAnswer={saveAnswer} disabled={submitted} />
               <div className="actions navigation">
                 <button type="button" disabled={selectedIndex <= 0} onClick={() => setSelectedTaskId(tasks[selectedIndex - 1].id)}>Назад</button>
@@ -72,7 +69,7 @@ export default function App({ trainingSet = defaultSet }: AppProps) {
           {tasks.map((task, index) => {
             const answer = answers[task.id];
             let display = "Нет ответа";
-            if (isFilled(task, answer) && answer) {
+            if (isFilled(task, answerList) && answer) {
               if (task.kind === "single-choice" && answer.kind === "single-choice") display = task.options.find((option) => option.id === answer.optionId)?.label ?? answer.optionId;
               if (answer.kind === "short-text") display = answer.text;
             }
